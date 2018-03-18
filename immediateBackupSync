@@ -1,0 +1,6 @@
+#!/bin/bash
+#This script finds the pid of the websiteManagerDaemon and executes
+#the relevent command to send a signal instructing the 
+#daemon to perform an immediate backup
+
+pgrep -f signalsDaemons | xargs kill -USR1
