@@ -19,6 +19,30 @@
 void backup_sync_handler(int signo){
 	if(signo == SIGUSR1){
 		//this will call the backup and sync processes
+		
+		//create a new message queue
+		mqd_t mq;
+		char buffer[1024];
+
+		mq = mq_open("/webserver_queue", O_WRONLY);
+		mq_send(mq, "Immediate backup and sync initiated", 1024, 0);
+		//perform backup
+		if(backupWebsite() == 1){
+			mq_send(mq, "immediate backup successful", 1024, 0);
+		}else{
+			mq_send(mq, "immediate backup unsuccessful", 1024, 0);
+		}
+
+
+		//perform sync
+		if(syncWebsite() == 1){
+			mq_send(mq, "immediate sync successful", 1024, 0);
+		}else{
+			mq_send(mq, "immediate sync unsuccessful", 1024, 0);
+		}
+
+		mq_close(mq);
+
 	}
 }
 
@@ -30,7 +54,7 @@ int main(int argc, char **argv){
 	time(&now); //gets the current time
 	logtime = *localtime(&now);
 	logtime.tm_hour = 17;
-	logtime.tm_min = 06;
+	logtime.tm_min = 52;
 	logtime.tm_sec = 0;
 	
 	//create the message queue
@@ -42,7 +66,7 @@ int main(int argc, char **argv){
 
 	//if parent - kill it
 	if( pid > 0){
-		printf("Parent process");
+		printf("Killing parent\n");
 		exit(EXIT_SUCCESS); //this kills the parent - makes orphan
 	}
 	else if(pid == 0){ //the child process
@@ -115,8 +139,8 @@ int main(int argc, char **argv){
 				//send a message to message queue
 				mq_send(mq, "Begin backup and sync", 1024, 0);
 				sleep(2);
-				//read only
-				char read_only_mode[] = "0444";
+				//root access only - to perform rsync
+				char read_only_mode[] = "0700";
 				//alter the permissions for the intranet site
 				//cannot write/modify while backup process taking place
 				char buff[100] = "/home/dbutler/Documents/systSoft/assignment1/intranetSite";

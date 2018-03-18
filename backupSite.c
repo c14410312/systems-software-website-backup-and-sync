@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#define ROOT "~/Documents/systSoft/assignment1/intranetSite/"
-#define DESTINY "~/Documents/systSoft/assignment1/backupFolder/"
+#define ROOT "/home/dbutler/Documents/systSoft/assignment1/intranetSite/"
+#define DESTINY "/home/dbutler/Documents/systSoft/assignment1/backupFolder/"
 
 int backupWebsite(){
 

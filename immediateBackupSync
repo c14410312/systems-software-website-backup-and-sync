@@ -3,4 +3,4 @@
 #the relevent command to send a signal instructing the 
 #daemon to perform an immediate backup
 
-pgrep -f signalsDaemons | xargs kill -USR1
+pgrep -f websiteDaemon | xargs kill -USR1
